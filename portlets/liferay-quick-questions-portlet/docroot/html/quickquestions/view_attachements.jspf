@@ -1,0 +1,78 @@
+<div>
+<liferay-ui:custom-attributes-available className="<%= MBMessage.class.getName() %>">
+	<div class="custom-attributes">
+			<liferay-ui:custom-attribute-list
+					className="<%= MBMessage.class.getName() %>"
+					classPK="<%= (message != null) ? message.getMessageId() : 0 %>"
+					editable="<%= false %>"
+					label="<%= true %>"
+			/>
+	</div>
+</liferay-ui:custom-attributes-available>
+
+				<c:if test="<%= message.getMessageId() > 0 %>">
+
+					<%
+					int attachmentsFileEntriesCount = message.getAttachmentsFileEntriesCount();
+					int deletedAttachmentsFileEntriesCount = message.getDeletedAttachmentsFileEntriesCount();
+					%>
+
+					<c:if test="<%= ((attachmentsFileEntriesCount > 0) || ((deletedAttachmentsFileEntriesCount > 0) && TrashUtil.isTrashEnabled(scopeGroupId) && MBMessagePermission.contains(permissionChecker, message, ActionKeys.UPDATE))) %>">
+						<div class="message-attachments">
+							<h3><liferay-ui:message key="attachments" />:</h3>
+
+							<%
+							List<FileEntry> attachmentsFileEntries = message.getAttachmentsFileEntries();
+
+							for (FileEntry fileEntry : attachmentsFileEntries) {
+								if (MimeTypesUtil.isWebImage(fileEntry.getMimeType())) {
+							%>
+
+									<div>
+										<img alt="<liferay-ui:message key="attachment" />" src="<%= PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK) %>" />
+									</div>
+
+									<br />
+
+							<%
+								}
+							}
+							%>
+
+							<ul>
+
+								<%
+								for (FileEntry fileEntry : attachmentsFileEntries) {
+								%>
+
+									<li class="message-attachment">
+
+										<%
+										StringBundler sb = new StringBundler(4);
+
+										sb.append(fileEntry.getTitle());
+										sb.append(StringPool.OPEN_PARENTHESIS);
+										sb.append(TextFormatter.formatStorageSize(fileEntry.getSize(), locale));
+										sb.append(StringPool.CLOSE_PARENTHESIS);
+
+										String portletFileEntryURL = PortletFileRepositoryUtil.getPortletFileEntryURL(themeDisplay, fileEntry, StringPool.BLANK);
+
+										String downloadPortletFileEntryURL = HttpUtil.addParameter(portletFileEntryURL, "download", true);
+										%>
+
+										<liferay-ui:icon
+											image='<%= "../file_system/small/" + DLUtil.getFileIcon(fileEntry.getExtension()) %>'
+											label="<%= true %>"
+											message="<%= sb.toString() %>"
+											url="<%= downloadPortletFileEntryURL %>"
+										/>
+									</li>
+
+								<%
+								}
+								%>
+							</ul>
+						</div>
+					</c:if>
+				</c:if>
+			</div>
