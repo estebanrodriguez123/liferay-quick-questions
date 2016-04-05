@@ -90,8 +90,9 @@
 				DynamicQuery messagesWithTitle = DynamicQueryFactoryUtil.forClass(MBMessage.class, "message");
 				messagesWithTitle.setProjection(PropertyFactoryUtil.forName("message.threadId"));
 				
-				if(title.trim().length() > 0)
-					messagesWithTitle.add(PropertyFactoryUtil.forName("message.subject").like(title));
+				if(title.trim().length() > 0) {
+					messagesWithTitle.add(RestrictionsFactoryUtil.ilike("message.subject", String.format("%%%s%%", title.trim())));
+				}
 				
 				if(categoryIds.length > 0)
 					messagesWithTitle.add(PropertyFactoryUtil.forName("message.categoryId").in(categoryIds));
@@ -127,28 +128,10 @@
 		<aui:form action="<%=portletURL %>">
 			<aui:fieldset>
 				<aui:field-wrapper>
-						Title:<br> 
-				<input type="text" name="<%=renderResponse.getNamespace()%>title" placeholder="Search by Title">
-				<%
-					PortletURL clearURL = renderResponse.createRenderURL();
-					clearURL.setParameter("topLink", "all");
-					clearURL.setParameter("target", "view_main");
-					clearURL.setParameter("subtargetPage", "view_category_list");
-					clearURL.setParameter("topLink", topLink);
-				%>
-				
-				<a href="<%=clearURL.toString()%>"> Clear Search</a>
+					<aui:input type="text" name="title" value="<%= title %>" placeholder="Search by Title"/>
 				</aui:field-wrapper>
-				
-				<aui:field-wrapper>
-				<aui:button value="Search" type="submit"/>
-				</aui:field-wrapper>
-				<aui:input name="isSearch" value="true" type="hidden"></aui:input>
-							
-				<div>
-					<aui:field-wrapper>
-						Categories: <br> 
-							<select name="<%=renderResponse.getNamespace()%>categories" multiple="true" class="choosen" data-placeholder="Select Categories">
+				<aui:field-wrapper label="categories">
+					<select name="<%=renderResponse.getNamespace()%>categories" multiple="true" class="choosen" data-placeholder="Select Categories">
 						<option value="0" <%= ArrayUtil.contains(categoryIds, 0) ? "selected" : StringPool.BLANK %>>Default Category</option>
 						<% for(MBCategory category : categories){ 
 								if(!category.isInTrash() && !category.isInactive()){
@@ -158,9 +141,21 @@
 								}
 							}
 						%>
-				</select>
-					</aui:field-wrapper>
-				</div>
+					</select>
+				</aui:field-wrapper>
+				<%
+					PortletURL clearURL = renderResponse.createRenderURL();
+					clearURL.setParameter("topLink", "all");
+					clearURL.setParameter("target", "view_main");
+					clearURL.setParameter("subtargetPage", "view_category_list");
+					clearURL.setParameter("topLink", topLink);
+				%>
+				<aui:button-row>
+					<aui:button value="search" type="submit"/>
+					<aui:button href="<%=clearURL.toString()%>" value="clear"/>
+				</aui:button-row>
+				
+				<aui:input name="isSearch" value="true" type="hidden"></aui:input>
 			</aui:fieldset>
 		</aui:form>
 		<%} %>
@@ -305,7 +300,6 @@
 		<liferay-ui:search-container
 				curParam="cur1"
 				deltaConfigurable="<%= false %>"
-				emptyResultsMessage="you-are-not-subscribed-to-any-categories"
 				headerNames="category,Actions" delta="5"
 				iteratorURL="<%= portletURL %>"
 				total="<%= MBCategoryServiceUtil.getSubscribedCategoriesCount(scopeGroupId, user.getUserId()) %>"
