@@ -4,7 +4,7 @@
 	
 	<portlet>
 		<portlet-name>quick-questions-portlet</portlet-name>
-		<display-name>Quick Questions Portlet</display-name>
+		<display-name>Quick Questions</display-name>
 		<portlet-class>
 			com.rivetlogic.quickquestions.portlet.QuickQuestionsPortlet
 		</portlet-class>
@@ -26,9 +26,10 @@
 			<portlet-mode>view</portlet-mode>
 			<portlet-mode>edit</portlet-mode>
 		</supports>
+        <resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
-			<title>Quick Questions Portlet</title>
-			<short-title>Quick Questions Portlet</short-title>
+			<title>Quick Questions</title>
+			<short-title>Quick Questions</short-title>
 			<keywords></keywords>
 		</portlet-info>
 		<security-role-ref>
