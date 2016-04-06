@@ -11,6 +11,8 @@
 <%@page
 	import="com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil"%>
 <%@page
+	import="com.liferay.portal.kernel.dao.orm.Disjunction"%>
+<%@page
 	import="com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.DynamicQuery"%>
 <%@include file="/html/quickquestions/init.jsp"%>
@@ -91,7 +93,11 @@
 				messagesWithTitle.setProjection(PropertyFactoryUtil.forName("message.threadId"));
 				
 				if(title.trim().length() > 0) {
-					messagesWithTitle.add(RestrictionsFactoryUtil.ilike("message.subject", String.format("%%%s%%", title.trim())));
+				    Disjunction or = RestrictionsFactoryUtil.disjunction();
+				    for(String keyword : title.split(" ")) {
+				        or.add(RestrictionsFactoryUtil.ilike("message.subject", String.format("%%%s%%", keyword)));
+				    }
+				    messagesWithTitle.add(or);
 				}
 				
 				if(categoryIds.length > 0)
@@ -100,7 +106,11 @@
 					messagesWithTitle.add(PropertyFactoryUtil.forName("message.userId").eq(groupThreadsUserId));
 				
 				messagesWithTitle.add(PropertyFactoryUtil.forName("message.groupId").eq(scopeGroupId));
-				registered.add(PropertyFactoryUtil.forName("thread.threadId").in(messagesWithTitle));
+				List ids = MBMessageLocalServiceUtil.dynamicQuery(messagesWithTitle);
+				if(ids.isEmpty()) {
+				    ids = Arrays.asList(-1L);
+				}
+				registered.add(PropertyFactoryUtil.forName("thread.threadId").in(ids));
 			}else{
 				List<Long> catIdList = new ArrayList<Long>(categories.size());
 				catIdList.add(new Long(0));
@@ -206,9 +216,13 @@
 						else if (topLink.equals("my-subscriptions")) {
 								DynamicQuery subscription = DynamicQueryFactoryUtil.forClass(Subscription.class,"subscription");
 								subscription.setProjection(ProjectionFactoryUtil.property("classPK"));
-								subscription.add(PropertyFactoryUtil.forName("subscription.classPK").eqProperty("thread.threadId"));
+								//subscription.add(PropertyFactoryUtil.forName("subscription.classPK").eqProperty("thread.threadId"));
 								subscription.add(PropertyFactoryUtil.forName("subscription.userId").eq(groupThreadsUserId));
-								registered.add(PropertyFactoryUtil.forName("thread.threadId").in(subscription));
+								List ids = MBThreadLocalServiceUtil.dynamicQuery(subscription);
+								if(ids.isEmpty()) {
+								    ids = Arrays.asList(-1L);
+								}
+								registered.add(PropertyFactoryUtil.forName("thread.threadId").in(ids));
 								
 								List<MBThread> threads = MBThreadLocalServiceUtil.dynamicQuery(registered); 
 									
