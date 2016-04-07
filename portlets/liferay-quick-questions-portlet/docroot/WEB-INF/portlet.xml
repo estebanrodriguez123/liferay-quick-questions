@@ -4,7 +4,7 @@
 	
 	<portlet>
 		<portlet-name>quick-questions-portlet</portlet-name>
-		<display-name>Quick Questions Portlet</display-name>
+		<display-name>Quick Questions</display-name>
 		<portlet-class>
 			com.rivetlogic.quickquestions.portlet.QuickQuestionsPortlet
 		</portlet-class>
@@ -16,19 +16,15 @@
 			<name>add-process-action-success-action</name> 
 			<value>false</value>
 		</init-param>
-		<init-param>
-			<name>edit-template</name>
-			<value>/html/quickquestions/edit.jsp</value>
-		</init-param>
 		<expiration-cache>0</expiration-cache>
 		<supports>
 			<mime-type>text/html</mime-type>
 			<portlet-mode>view</portlet-mode>
-			<portlet-mode>edit</portlet-mode>
 		</supports>
+        <resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
-			<title>Quick Questions Portlet</title>
-			<short-title>Quick Questions Portlet</short-title>
+			<title>Quick Questions</title>
+			<short-title>Quick Questions</short-title>
 			<keywords></keywords>
 		</portlet-info>
 		<security-role-ref>

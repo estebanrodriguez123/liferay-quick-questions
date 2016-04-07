@@ -24,7 +24,7 @@
 
 <liferay-ui:panel-container>
 
-	<liferay-ui:panel title="Question" extended="true" persistState="true">
+	<liferay-ui:panel title="<%= parentMessage.getSubject() %>" extended="true" persistState="true">
 		<div class="content question-view">
 
 			<%

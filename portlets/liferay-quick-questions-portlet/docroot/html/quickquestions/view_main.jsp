@@ -11,6 +11,8 @@
 <%@page
 	import="com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil"%>
 <%@page
+	import="com.liferay.portal.kernel.dao.orm.Disjunction"%>
+<%@page
 	import="com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.DynamicQuery"%>
 <%@include file="/html/quickquestions/init.jsp"%>
@@ -90,8 +92,13 @@
 				DynamicQuery messagesWithTitle = DynamicQueryFactoryUtil.forClass(MBMessage.class, "message");
 				messagesWithTitle.setProjection(PropertyFactoryUtil.forName("message.threadId"));
 				
-				if(title.trim().length() > 0)
-					messagesWithTitle.add(PropertyFactoryUtil.forName("message.subject").like(title));
+				if(title.trim().length() > 0) {
+				    Disjunction or = RestrictionsFactoryUtil.disjunction();
+				    for(String keyword : title.split(" ")) {
+				        or.add(RestrictionsFactoryUtil.ilike("message.subject", String.format("%%%s%%", keyword)));
+				    }
+				    messagesWithTitle.add(or);
+				}
 				
 				if(categoryIds.length > 0)
 					messagesWithTitle.add(PropertyFactoryUtil.forName("message.categoryId").in(categoryIds));
@@ -99,7 +106,11 @@
 					messagesWithTitle.add(PropertyFactoryUtil.forName("message.userId").eq(groupThreadsUserId));
 				
 				messagesWithTitle.add(PropertyFactoryUtil.forName("message.groupId").eq(scopeGroupId));
-				registered.add(PropertyFactoryUtil.forName("thread.threadId").in(messagesWithTitle));
+				List ids = MBMessageLocalServiceUtil.dynamicQuery(messagesWithTitle);
+				if(ids.isEmpty()) {
+				    ids = Arrays.asList(-1L);
+				}
+				registered.add(PropertyFactoryUtil.forName("thread.threadId").in(ids));
 			}else{
 				List<Long> catIdList = new ArrayList<Long>(categories.size());
 				catIdList.add(new Long(0));
@@ -127,28 +138,10 @@
 		<aui:form action="<%=portletURL %>">
 			<aui:fieldset>
 				<aui:field-wrapper>
-						Title:<br> 
-				<input type="text" name="<%=renderResponse.getNamespace()%>title" placeholder="Search by Title">
-				<%
-					PortletURL clearURL = renderResponse.createRenderURL();
-					clearURL.setParameter("topLink", "all");
-					clearURL.setParameter("target", "view_main");
-					clearURL.setParameter("subtargetPage", "view_category_list");
-					clearURL.setParameter("topLink", topLink);
-				%>
-				
-				<a href="<%=clearURL.toString()%>"> Clear Search</a>
+					<aui:input type="text" name="title" value="<%= title %>" placeholder="Search by Title"/>
 				</aui:field-wrapper>
-				
-				<aui:field-wrapper>
-				<aui:button value="Search" type="submit"/>
-				</aui:field-wrapper>
-				<aui:input name="isSearch" value="true" type="hidden"></aui:input>
-							
-				<div>
-					<aui:field-wrapper>
-						Categories: <br> 
-							<select name="<%=renderResponse.getNamespace()%>categories" multiple="true" class="choosen" data-placeholder="Select Categories">
+				<aui:field-wrapper label="categories">
+					<select name="<%=renderResponse.getNamespace()%>categories" multiple="true" class="choosen" data-placeholder="Select Categories">
 						<option value="0" <%= ArrayUtil.contains(categoryIds, 0) ? "selected" : StringPool.BLANK %>>Default Category</option>
 						<% for(MBCategory category : categories){ 
 								if(!category.isInTrash() && !category.isInactive()){
@@ -158,9 +151,21 @@
 								}
 							}
 						%>
-				</select>
-					</aui:field-wrapper>
-				</div>
+					</select>
+				</aui:field-wrapper>
+				<%
+					PortletURL clearURL = renderResponse.createRenderURL();
+					clearURL.setParameter("topLink", "all");
+					clearURL.setParameter("target", "view_main");
+					clearURL.setParameter("subtargetPage", "view_category_list");
+					clearURL.setParameter("topLink", topLink);
+				%>
+				<aui:button-row>
+					<aui:button value="search" type="submit"/>
+					<aui:button href="<%=clearURL.toString()%>" value="clear"/>
+				</aui:button-row>
+				
+				<aui:input name="isSearch" value="true" type="hidden"></aui:input>
 			</aui:fieldset>
 		</aui:form>
 		<%} %>
@@ -211,9 +216,13 @@
 						else if (topLink.equals("my-subscriptions")) {
 								DynamicQuery subscription = DynamicQueryFactoryUtil.forClass(Subscription.class,"subscription");
 								subscription.setProjection(ProjectionFactoryUtil.property("classPK"));
-								subscription.add(PropertyFactoryUtil.forName("subscription.classPK").eqProperty("thread.threadId"));
+								//subscription.add(PropertyFactoryUtil.forName("subscription.classPK").eqProperty("thread.threadId"));
 								subscription.add(PropertyFactoryUtil.forName("subscription.userId").eq(groupThreadsUserId));
-								registered.add(PropertyFactoryUtil.forName("thread.threadId").in(subscription));
+								List ids = MBThreadLocalServiceUtil.dynamicQuery(subscription);
+								if(ids.isEmpty()) {
+								    ids = Arrays.asList(-1L);
+								}
+								registered.add(PropertyFactoryUtil.forName("thread.threadId").in(ids));
 								
 								List<MBThread> threads = MBThreadLocalServiceUtil.dynamicQuery(registered); 
 									
@@ -305,7 +314,6 @@
 		<liferay-ui:search-container
 				curParam="cur1"
 				deltaConfigurable="<%= false %>"
-				emptyResultsMessage="you-are-not-subscribed-to-any-categories"
 				headerNames="category,Actions" delta="5"
 				iteratorURL="<%= portletURL %>"
 				total="<%= MBCategoryServiceUtil.getSubscribedCategoriesCount(scopeGroupId, user.getUserId()) %>"
