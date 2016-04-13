@@ -25,19 +25,20 @@
 <liferay-ui:error key="duplicate-file" message="Please enter a unique document name." />
 <aui:row>
 	<aui:col span="3">
-	<div id="questions">
+	<%@ include file="/html/quickquestions/latest_questions_listing.jspf" %>
+	<div id="questions" class="questions-list">
 		<c:if test="<%=MBCategoryPermission.contains(permissionChecker, scopeGroupId, categoryId, ActionKeys.ADD_MESSAGE)%>">
-		<div class="margin-left-50 margin-top-21">
+		<div class="">
 		<portlet:renderURL var="editQuestionURL">
 			<portlet:param name="targetPage" value="edit_question"></portlet:param>
 			<portlet:param name="isNew" value="true"/>
 		</portlet:renderURL>
 		<aui:button
         value="Ask a question"
-        onClick="${editQuestionURL}" cssClass="btn-primary btn-main" /> <%--<%= editQuestionURL.toString() %> --%>
+        onClick="${editQuestionURL}" cssClass="btn-primary btn-main listing-btn" /> <%--<%= editQuestionURL.toString() %> --%>
         </div>
 		</c:if>
-		<div class="margin-top-5 margin-left-50">
+		<div class="">
 		<portlet:renderURL var="viewAllURL">
 			<portlet:param name="targetPage" value="view_main"></portlet:param>
 			<portlet:param name="messageId" value="0"></portlet:param>
@@ -45,10 +46,9 @@
 		</portlet:renderURL>
 		<aui:button 
         value="View all" 
-        onClick="${viewAllURL}" cssClass="margin-top-5 btn-main" /> <%--<%= viewAllURL.toString() %> --%>
+        onClick="${viewAllURL}" cssClass="btn-main listing-btn" /> <%--<%= viewAllURL.toString() %> --%>
         </div>
       </div>
-		<%@ include file="/html/quickquestions/latest_questions_listing.jspf" %>
 	</aui:col>
 	<aui:col span="9">
 		<div class="margin-top-21">
@@ -56,3 +56,4 @@
 		</div>
 	</aui:col>
 </aui:row>
+

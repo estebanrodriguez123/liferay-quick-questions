@@ -64,7 +64,7 @@
 			</div>
 				
 					<h3><%= (message != null) ? message.getSubject() : StringPool.BLANK%>
-						?
+						
 					</h3>
 				</div>
 				<%

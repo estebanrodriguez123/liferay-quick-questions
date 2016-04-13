@@ -107,3 +107,45 @@ hr {
 .questions .only{
 	background-color: #d3d3d3;
 }
+
+/* --- */
+
+.aui .questions-list .listing-btn {
+	margin-top: 5px !important;
+}
+
+.aui .questions-list {
+	text-align: center;
+}
+
+.aui .navbar .navbar-inner {
+    padding: 0px;
+}
+
+.aui .title-text {
+	font-size: 15px;
+    font-weight: normal;
+    color: #333;
+}
+
+.aui .control-group {
+	margin-bottom: 15px !important;
+
+	input {
+		font-size: 12px !important;
+		width: 47%;
+	}
+}
+
+.aui .message-attachments .attached-img {
+    width: 100px;
+    float: left;
+    margin-right: 20px;
+    height: 80px;
+    margin-bottom: 20px;
+
+    img {
+    	max-height: 100%;
+    }
+}
+
