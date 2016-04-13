@@ -50,7 +50,7 @@
 			
 			<aui:input name="threadId" type="hidden"
 				value="<%=currQuestion != null ? currQuestion.getThreadId() : StringPool.BLANK%>" />
-				
+			<!--
 			<aui:select name="mbCategoryId" label="Category" cssClass="chosen" multiple="true" data-placeholder="Select a Category">
 				
 				<aui:option value="0" label="Default Category"  selected="<%=currQuestion != null && (currQuestion.getCategoryId() == 0)%>" />
@@ -65,6 +65,20 @@
 					}} 
 				%>
 			</aui:select>
+			-->
+			<label for="mbCategoryId">Categories</label>
+			<select name="mbCategoryId" label="Category" cssClass="chosen" data-placeholder="Select a Category">
+				<%
+					List<MBCategory> categories = (List<MBCategory>)request.getAttribute("categories");
+					for(MBCategory category : categories){
+						if(!category.isInTrash() && !category.isInactive()){
+				%>
+				<option value="<%=category.getCategoryId()%>" label="<%=category.getName()%>"
+					selected="<%=(currQuestion != null && (currQuestion.getCategoryId() == category.getCategoryId())) %>" />
+				<%
+					}} 
+				%>
+			</select>
 
 			<c:if test="<%=currQuestion == null%>">
 				<aui:field-wrapper label="permissions">
@@ -73,7 +87,7 @@
 				</aui:field-wrapper>
 			</c:if>
 
-			<aui:field-wrapper label="Body">
+			<aui:field-wrapper label="Description">
 				<liferay-ui:input-editor toolbarSet="liferay" />
 				<aui:input name="body" type="hidden"  value="${body}"/>
 				<%-- <input name="<portlet:namespace />body" type="hidden"

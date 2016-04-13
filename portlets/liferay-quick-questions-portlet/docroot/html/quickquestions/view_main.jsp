@@ -360,7 +360,7 @@
 	</c:if>
 	
 	<aui:script>
-		$('.choosen').chosen({width:'80%',display_disabled_options:false});
+		$('.choosen').chosen({width:'50%',display_disabled_options:false});
 	</aui:script>
 	
 	</liferay-ui:panel>
