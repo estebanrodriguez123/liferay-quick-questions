@@ -66,6 +66,7 @@
 				%>
 			</aui:select>
 			-->
+			<c:if test="<%=currQuestion == null%>">
 			<label for="mbCategoryId">Categories</label>
 			<select name="mbCategoryId" label="Category" cssClass="chosen" data-placeholder="Select a Category">
 				<%
@@ -79,7 +80,7 @@
 					}} 
 				%>
 			</select>
-
+			</c:if>
 			<c:if test="<%=currQuestion == null%>">
 				<aui:field-wrapper label="permissions">
 					<liferay-ui:input-permissions
