@@ -111,7 +111,7 @@
 								<%
 									Date now = new Date();
 
-								                    		long lastPostAgo = now.getTime() - thread.getLastPostDate().getTime();
+								                    		long lastPostAgo = now.getTime() - message.getCreateDate().getTime();
 								%>
 								<%=LanguageUtil.format(pageContext, "x-ago", LanguageUtil.getTimeDescription(pageContext, lastPostAgo, true))%>
 							</p>
