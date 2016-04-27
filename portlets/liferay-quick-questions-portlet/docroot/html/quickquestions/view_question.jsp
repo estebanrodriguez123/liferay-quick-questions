@@ -148,6 +148,7 @@
 						.getMessageId()) : StringPool.BLANK%>" />
 									<portlet:param name="parentMessageId" value="<%=message != null ? String.valueOf(message
 											.getParentMessageId()) : StringPool.BLANK %>"/>
+									<portlet:param name="redirect" value="<%= (message.getParentMessageId() == 0)? homeUrl : currentUrl %>"/>
 								</portlet:actionURL>
 								<span class="delete"><a href="<%=deleteQuestionURL%>">Delete</a></span>
 							</c:if>
@@ -189,6 +190,7 @@
 					<portlet:param name="question" value="true" />
 					<portlet:param name="redirectTo" value="view_question"/>
 					<portlet:param name="isPost" value="true" />
+					<portlet:param name="redirect" value="<%= currentUrl %>"/>
 				</portlet:actionURL>
 				<aui:form action="<%=addQuestionURL%>" enctype="multipart/form-data"
 					method="post" name="fm_edit_question"

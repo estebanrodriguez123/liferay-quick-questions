@@ -49,6 +49,7 @@
 		<portlet:param name="messageId"
 			value="<%=message != null ? String.valueOf(message
 							.getMessageId()) : StringPool.BLANK%>" />
+		<portlet:param name="redirect" value="<%= homeUrl %>"/>
 	</portlet:actionURL>
 	<liferay-ui:icon-delete label="Delete"
 			url="<%= deleteURL %>"
@@ -73,6 +74,7 @@
 						value="<%=message != null ? String
 										.valueOf(message.getMessageId())
 										: StringPool.BLANK%>" />
+					<portlet:param name="redirect" value="<%= homeUrl %>"/>
 				</portlet:actionURL>
 
 				<liferay-ui:icon image="unsubscribe" url="<%=unsubscribeURL%>"
@@ -86,6 +88,7 @@
 						value="<%=message != null ? String
 										.valueOf(message.getMessageId())
 										: StringPool.BLANK%>" />
+					<portlet:param name="redirect" value="<%= homeUrl %>"/>
 				</portlet:actionURL>
 
 				<liferay-ui:icon image="subscribe" url="<%=subscribeURL%>"

@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StreamUtil;
@@ -28,15 +29,12 @@ import com.liferay.portlet.messageboards.service.MBMessageServiceUtil;
 import com.liferay.portlet.messageboards.service.MBThreadLocalServiceUtil;
 import com.liferay.portlet.messageboards.service.MBThreadServiceUtil;
 import com.liferay.util.bridges.mvc.MVCPortlet;
-import com.rivetlogic.quickquestions.action.QuestionTitleException;
-import com.rivetlogic.quickquestions.action.util.MBUtil;
 import com.rivetlogic.quickquestions.model.permissions.MBMessagePermission;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -62,7 +60,10 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			long messageId = ParamUtil.getLong(actionRequest, "messageId");
 
 			MBMessageServiceUtil.unsubscribeMessage(messageId);
-			MBUtil.setRenderParams(actionRequest, actionResponse);
+			//MBUtil.setRenderParams(actionRequest, actionResponse);
+			
+			SessionMessages.add(actionRequest, "unsuscribed-successfully");
+			sendRedirect(actionRequest, actionResponse);
 	}
 	
 	public void subscribeMessage(ActionRequest actionRequest,ActionResponse actionResponse)
@@ -71,7 +72,10 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			long messageId = ParamUtil.getLong(actionRequest, "messageId");
 
 			MBMessageServiceUtil.subscribeMessage(messageId);
-			MBUtil.setRenderParams(actionRequest, actionResponse);
+			//MBUtil.setRenderParams(actionRequest, actionResponse);
+			
+	        SessionMessages.add(actionRequest, "suscribed-successfully");    
+			sendRedirect(actionRequest, actionResponse);
 	}
  
 		public void render(RenderRequest request, RenderResponse response)
@@ -136,14 +140,14 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
-		actionResponse.setRenderParameters(actionRequest.getParameterMap());
+		//actionResponse.setRenderParameters(actionRequest.getParameterMap());
 		UploadPortletRequest uploadPortletRequest =
 				PortalUtil.getUploadPortletRequest(actionRequest);
 		
 		String targetpage = uploadPortletRequest.getParameter("targetPage");
 		uploadPortletRequest.setAttribute("targetPage", targetpage);
 		
-		String redirectTo = uploadPortletRequest.getParameter("redirectTo");
+//		String redirectTo = uploadPortletRequest.getParameter("redirectTo");
 		
 		
 		
@@ -158,14 +162,14 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 		
 		boolean isPost = ParamUtil.getBoolean(uploadPortletRequest, "isPost");
 		
-		
+		MBMessage message = null;
 		
 		if((subject  == null || subject.trim().length() <= 0) && !isPost){
-			actionResponse.setRenderParameter("targetPage", redirectTo);
+			//actionResponse.setRenderParameter("targetPage", redirectTo);
 			SessionErrors.add(actionRequest, "title-is-required");
-			actionResponse.setRenderParameter("mbCategoryId", String.valueOf(categoryId));
-			actionResponse.setRenderParameter("body", "body");
-			actionResponse.setRenderParameter("parentMessageId", String.valueOf(parentMessageId));
+			//actionResponse.setRenderParameter("mbCategoryId", String.valueOf(categoryId));
+			//actionResponse.setRenderParameter("body", "body");
+			//actionResponse.setRenderParameter("parentMessageId", String.valueOf(parentMessageId));
 			SessionMessages.add(actionRequest, PortalUtil.getPortletId(actionRequest) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
 			return;
 		}
@@ -211,8 +215,6 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			boolean preview = ParamUtil.getBoolean(actionRequest, "preview");
 
 			serviceContext.setAttribute("preview", preview);
-
-			MBMessage message = null;
 
 			if (messageId <= 0) {
 				if (threadId <= 0) {
@@ -284,20 +286,20 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			}
 
 			
-			actionResponse.setRenderParameter("messageId", String.valueOf(message.getRootMessageId()));
+			//actionResponse.setRenderParameter("messageId", String.valueOf(message.getRootMessageId()));
 			
 			SessionMessages.add(actionRequest, "message-add-success");
 			
 		}catch (DuplicateFileException e) {
-			Map parameterMap = actionRequest.getParameterMap();
+//			Map parameterMap = actionRequest.getParameterMap();
 			actionResponse.setRenderParameters(actionRequest.getParameterMap());
-			actionResponse.setRenderParameter("targetPage", redirectTo);
-			actionResponse.setRenderParameter("isNew", "true");
+//			actionResponse.setRenderParameter("targetPage", redirectTo);
+//			actionResponse.setRenderParameter("isNew", "true");
 			SessionErrors.add(actionRequest, "duplicate-file");
-			actionResponse.setRenderParameter("subject", subject);
-			actionResponse.setRenderParameter("body", body);
-			actionResponse.setRenderParameter("mbCategoryId", String.valueOf(categoryId));
-			actionResponse.setRenderParameter("parentMessageId", String.valueOf(parentMessageId));
+//			actionResponse.setRenderParameter("subject", subject);
+//			actionResponse.setRenderParameter("body", body);
+//			actionResponse.setRenderParameter("mbCategoryId", String.valueOf(categoryId));
+//			actionResponse.setRenderParameter("parentMessageId", String.valueOf(parentMessageId));
 			
 			
 			SessionMessages.add(actionRequest, PortalUtil.getPortletId(actionRequest) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
@@ -314,6 +316,11 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 				StreamUtil.cleanUp(inputStream);
 			}
 		}
+		String redirect = ParamUtil.getString(actionRequest, "redirect");
+		if(messageId == 0) {
+            redirect = HttpUtil.addParameter(redirect,  actionResponse.getNamespace() + "messageId", message.getMessageId());
+        }
+		actionResponse.sendRedirect(redirect);
 	}
 	
 	
@@ -326,24 +333,24 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			
 			MBMessageServiceUtil.deleteMessage(messageId);
 			
-			if(parentMessageId > 0){
-				response.setRenderParameter("messageId", String.valueOf(parentMessageId));
-				response.setRenderParameter("targetPage", "view_question");
-			}else{
-				response.setRenderParameter("targetPage", "view_main");
-			}
+//			if(parentMessageId > 0){
+//				response.setRenderParameter("messageId", String.valueOf(parentMessageId));
+//				response.setRenderParameter("targetPage", "view_question");
+//			}else{
+//				response.setRenderParameter("targetPage", "view_main");
+//			}
 			
 			
 		}catch(Exception e){
 			SessionErrors.add(actionRequest, e.getClass());
 			SessionMessages.add(actionRequest, PortalUtil.getPortletId(actionRequest) + SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-			response.setRenderParameter("messageId", String.valueOf(messageId));
-			response.setRenderParameter("targetPage", "view_question");
+			//response.setRenderParameter("messageId", String.valueOf(messageId));
+			//response.setRenderParameter("targetPage", "view_question");
 			throw e;
 		}
 		
 		SessionMessages.add(actionRequest, "message-delete-success");
-		
+		sendRedirect(actionRequest, response);
 	}
 
 	
@@ -404,6 +411,8 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 					inPassword, inReadInterval, outEmailAddress, outCustom,
 					outServerName, outServerPort, outUseSSL, outUserName,
 					outPassword, allowAnonymous, mailingListActive, serviceContext);
+				
+				SessionMessages.add(actionRequest, "category-added-successfully");
 			}
 			else {
 
@@ -416,15 +425,11 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 					outCustom, outServerName, outServerPort, outUseSSL, outUserName,
 					outPassword, allowAnonymous, mailingListActive,
 					mergeWithParentCategory, serviceContext);
+				
+				SessionMessages.add(actionRequest, "category-updated-successfully");
 			}
 			
-			actionRequest.setAttribute("edit-category.jsp.category", category);
-
-			MBUtil.setRenderParams(actionRequest, actionResponse);
-			
-			actionResponse.setRenderParameter("categoryId", String.valueOf(category.getCategoryId()));
-			actionResponse.setRenderParameter("parentCategoryId", String.valueOf(category.getParentCategoryId()));
-			
+			sendRedirect(actionRequest, actionResponse);
 		}
 	
 	
@@ -455,7 +460,13 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 					themeDisplay.getScopeGroupId(), deleteCategoryId);
 		}
 		
-		MBUtil.setRenderParams(actionRequest, actionResponse);
+//		MBUtil.setRenderParams(actionRequest, actionResponse);
+		
+		SessionMessages.add(actionRequest, "category-deleted-successfully");
+		
+		String redirect = ParamUtil.getString(actionRequest, "redirect");
+		redirect = HttpUtil.addParameter(redirect, actionResponse.getNamespace() + "topLink", "categories");
+		actionResponse.sendRedirect(redirect);
 	}
 
 	public void subscribeCategory(ActionRequest actionRequest, ActionResponse actionResponse)
@@ -469,7 +480,10 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 		MBCategoryServiceUtil.subscribeCategory(
 			themeDisplay.getScopeGroupId(), categoryId);
 		
-		MBUtil.setRenderParams(actionRequest, actionResponse);
+		//MBUtil.setRenderParams(actionRequest, actionResponse);
+		
+		SessionMessages.add(actionRequest, "suscribed-successfully");
+		sendRedirect(actionRequest, actionResponse);
 	}
 
 	public void unsubscribeCategory(ActionRequest actionRequest, ActionResponse actionResponse)
@@ -484,7 +498,10 @@ public class QuickQuestionsPortlet extends MVCPortlet {
 			themeDisplay.getScopeGroupId(), categoryId);
 		
 		//actionResponse.setRenderParameters(actionRequest.getParameterMap());
-		MBUtil.setRenderParams(actionRequest, actionResponse);
+		//MBUtil.setRenderParams(actionRequest, actionResponse);
+		
+		SessionMessages.add(actionRequest, "unsuscribed-successfully");
+		sendRedirect(actionRequest, actionResponse);
 		
 	}
 	

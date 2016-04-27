@@ -19,17 +19,19 @@
 	String categoryId = ParamUtil.getString(renderRequest, "mbCategoryId"); */
 	
 	String cancelURL = ParamUtil.getString(request, "cancelURL");
-	
-	
 %>
 
 
 <liferay-ui:panel title='<%=(currQuestion == null) ? "New Question" : "Edit Question"%>' extended="true" persistState="true">
+	<portlet:renderURL var="viewQuestionUrl">
+		<portlet:param name="targetPage" value="view_question" />
+	</portlet:renderURL>
 	<portlet:actionURL name="updateMessage" var="addQuestionURL">
 		<portlet:param name="targetPage" value="view_question" />
 		<portlet:param name="redirectTo" value="edit_question" />
 		<portlet:param name="question" value="true" />
 		<portlet:param name="cancelURL" value="<%=cancelURL%>"/>
+		<portlet:param name="redirect" value="<%= (currQuestion == null) ? viewQuestionUrl : currentUrl %>"/>
 	</portlet:actionURL>
 	
 	<aui:model-context bean="<%=currQuestion%>"	model="<%=MBMessage.class%>" />
@@ -50,7 +52,7 @@
 			
 			<aui:input name="threadId" type="hidden"
 				value="<%=currQuestion != null ? currQuestion.getThreadId() : StringPool.BLANK%>" />
-			<!--
+			<%--
 			<aui:select name="mbCategoryId" label="Category" cssClass="chosen" multiple="true" data-placeholder="Select a Category">
 				
 				<aui:option value="0" label="Default Category"  selected="<%=currQuestion != null && (currQuestion.getCategoryId() == 0)%>" />
@@ -65,17 +67,19 @@
 					}} 
 				%>
 			</aui:select>
-			-->
+			--%>
 			<c:if test="<%=currQuestion == null%>">
-			<label for="mbCategoryId">Categories</label>
-			<select name="mbCategoryId" label="Category" cssClass="chosen" data-placeholder="Select a Category">
+			<label for="mbCategoryId">Category</label>
+			<select name="mbCategoryId" data-placeholder="Select a Category">
 				<%
 					List<MBCategory> categories = (List<MBCategory>)request.getAttribute("categories");
 					for(MBCategory category : categories){
 						if(!category.isInTrash() && !category.isInactive()){
 				%>
-				<option value="<%=category.getCategoryId()%>" label="<%=category.getName()%>"
-					selected="<%=(currQuestion != null && (currQuestion.getCategoryId() == category.getCategoryId())) %>" />
+				<option value="<%=category.getCategoryId()%>"
+					selected="<%=(currQuestion != null && (currQuestion.getCategoryId() == category.getCategoryId())) %>">
+					<%=category.getName()%>
+				</option>	
 				<%
 					}} 
 				%>

@@ -20,6 +20,11 @@
 
 <liferay-ui:success key="message-delete-success" message="Question deleted successfully"/>
 <liferay-ui:success key="message-add-success" message="Question added successfully"/>
+<liferay-ui:success key="suscribed-successfully" message="suscribed-successfully"/>
+<liferay-ui:success key="unsuscribed-successfully" message="unsuscribed-successfully"/>
+<liferay-ui:success key="category-added-successfully" message="category-added-successfully"/>
+<liferay-ui:success key="category-updated-successfully" message="category-updated-successfully"/>
+<liferay-ui:success key="category-deleted-successfully" message="category-deleted-successfully"/>
 <liferay-ui:error exception="<%= RequiredMessageException.class %>" message="you-cannot-delete-a-root-message-that-has-more-than-one-immediate-reply" />
 <liferay-ui:error key="title-is-required" message="Title is Required" />
 <liferay-ui:error key="duplicate-file" message="Please enter a unique document name." />
@@ -52,7 +57,7 @@
 	</aui:col>
 	<aui:col span="9">
 		<div class="margin-top-21">
-			<jsp:include page="/html/quickquestions/${not empty targetPage ? targetPage : 'view_main'}.jsp" />
+			<jsp:include page="/html/quickquestions/${not empty param.targetPage ? param.targetPage : 'view_main'}.jsp" />
 		</div>
 	</aui:col>
 </aui:row>
