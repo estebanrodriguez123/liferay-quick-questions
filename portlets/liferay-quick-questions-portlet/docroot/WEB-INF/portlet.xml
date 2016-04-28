@@ -13,6 +13,10 @@
 			<value>/html/quickquestions/view.jsp</value>
 		</init-param>
 		<init-param>
+			<name>help-template</name>
+			<value>/html/help.jsp</value>
+		</init-param>
+		<init-param>
 			<name>add-process-action-success-action</name> 
 			<value>false</value>
 		</init-param>
@@ -20,6 +24,7 @@
 		<supports>
 			<mime-type>text/html</mime-type>
 			<portlet-mode>view</portlet-mode>
+			<portlet-mode>help</portlet-mode>
 		</supports>
         <resource-bundle>content.Language</resource-bundle>
 		<portlet-info>
