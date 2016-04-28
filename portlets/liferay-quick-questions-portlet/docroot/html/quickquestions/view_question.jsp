@@ -14,7 +14,7 @@
 	MBMessage parentMessage =  MBMessageLocalServiceUtil.getMBMessage(currMessageId);
 	MBThread thread = parentMessage.getThread();
 	int total= thread.getMessageCount();//MBMessageServiceUtil.getThreadMessagesCount(scopeGroupId, parentMessage.getCategoryId(), thread.getThreadId(), WorkflowConstants.STATUS_APPROVED);
-	List<MBMessage> messages = MBMessageServiceUtil.getThreadMessages(parentMessage.getGroupId(), parentMessage.getCategoryId(), parentMessage.getThreadId(), WorkflowConstants.STATUS_APPROVED, 0, total);
+	List<MBMessage> messages = MBMessageLocalServiceUtil.getThreadMessages(parentMessage.getThreadId(), WorkflowConstants.STATUS_APPROVED, 0, total);
 	
 	
 	
@@ -111,7 +111,7 @@
 								<%
 									Date now = new Date();
 
-								                    		long lastPostAgo = now.getTime() - thread.getLastPostDate().getTime();
+								                    		long lastPostAgo = now.getTime() - message.getCreateDate().getTime();
 								%>
 								<%=LanguageUtil.format(pageContext, "x-ago", LanguageUtil.getTimeDescription(pageContext, lastPostAgo, true))%>
 							</p>
@@ -148,6 +148,7 @@
 						.getMessageId()) : StringPool.BLANK%>" />
 									<portlet:param name="parentMessageId" value="<%=message != null ? String.valueOf(message
 											.getParentMessageId()) : StringPool.BLANK %>"/>
+									<portlet:param name="redirect" value="<%= (message.getParentMessageId() == 0)? homeUrl : currentUrl %>"/>
 								</portlet:actionURL>
 								<span class="delete"><a href="<%=deleteQuestionURL%>">Delete</a></span>
 							</c:if>
@@ -189,6 +190,7 @@
 					<portlet:param name="question" value="true" />
 					<portlet:param name="redirectTo" value="view_question"/>
 					<portlet:param name="isPost" value="true" />
+					<portlet:param name="redirect" value="<%= currentUrl %>"/>
 				</portlet:actionURL>
 				<aui:form action="<%=addQuestionURL%>" enctype="multipart/form-data"
 					method="post" name="fm_edit_question"

@@ -5,6 +5,7 @@
 		<portlet:param name="topLink" value="categories"/>
 		<portlet:param name="subtargetPage" value="edit_category"/>
 		<portlet:param name="mvcPath" value="/html/quickquestions/view.jsp"></portlet:param>
+		<portlet:param name="redirect" value="<%= currentUrl %>"/>
 	</portlet:renderURL>
 	
 	<aui:button value="Add Category" onClick="<%=addCategoryURL%>" />

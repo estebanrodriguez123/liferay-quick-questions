@@ -142,7 +142,6 @@
 				</aui:field-wrapper>
 				<aui:field-wrapper label="categories">
 					<select name="<%=renderResponse.getNamespace()%>categories" multiple="true" class="choosen" data-placeholder="Select Categories">
-						<option value="0" <%= ArrayUtil.contains(categoryIds, 0) ? "selected" : StringPool.BLANK %>>Default Category</option>
 						<% for(MBCategory category : categories){ 
 								if(!category.isInTrash() && !category.isInactive()){
 						%>

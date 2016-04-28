@@ -38,6 +38,7 @@ else {
 			<portlet:param name="topLink" value="categories"/>
 			<portlet:param name="subtargetPage" value="edit_category"/>
 			<portlet:param name="mbCategoryId" value="<%= String.valueOf(category.getCategoryId()) %>" />
+			<portlet:param name="redirect" value="<%= currentUrl %>"/>
 		</portlet:renderURL>
 
 		<liferay-ui:icon
@@ -72,6 +73,7 @@ else {
 						<portlet:param name="topLink" value="categories"/>
 						<portlet:param name="subtargetPage" value="view_category_list"/>
 						<portlet:param name="mbCategoryId" value="<%= String.valueOf(category.getCategoryId()) %>" />
+						<portlet:param name="redirect" value="<%= currentUrl %>"/>
 					</portlet:actionURL>
 
 					<liferay-ui:icon
@@ -85,6 +87,7 @@ else {
 						<portlet:param name="topLink" value="categories"/>
 						<portlet:param name="subtargetPage" value="view_category_list"/>
 						<portlet:param name="mbCategoryId" value="<%= String.valueOf(category.getCategoryId()) %>" />
+						<portlet:param name="redirect" value="<%= currentUrl %>"/>
 					</portlet:actionURL>
 
 					<liferay-ui:icon
@@ -101,6 +104,7 @@ else {
 			<portlet:param name="topLink" value="categories"/>
 			<portlet:param name="subtargetPage" value="view_category_list"/>
 			<portlet:param name="mbCategoryId" value="<%= String.valueOf(category.getCategoryId()) %>" />
+			<portlet:param name="redirect" value="<%= currentUrl %>"/>
 		</portlet:actionURL>
 
 		<liferay-ui:icon-delete label="Delete"

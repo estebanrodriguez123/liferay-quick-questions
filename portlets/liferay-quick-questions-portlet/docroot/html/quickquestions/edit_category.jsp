@@ -21,12 +21,11 @@
 		MBCategory parentCategory = MBCategoryLocalServiceUtil
 				.getCategory(parentCategoryId);
 	}
+	String redirect = ParamUtil.getString(request, "redirect");
 %>
 
 <portlet:actionURL var="editCategoryURL" name="updateCategory">
-	<portlet:param name="targetPage" value="view_main" />
-	<portlet:param name="topLink" value="categories" />
-	<portlet:param name="subtargetPage" value="view_category_list" />
+	<portlet:param name="redirect" value="<%= redirect %>"/>
 </portlet:actionURL>
 
 <portlet:renderURL var="cancelURL">

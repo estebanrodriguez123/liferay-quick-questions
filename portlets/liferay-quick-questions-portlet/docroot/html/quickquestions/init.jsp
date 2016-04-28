@@ -73,8 +73,6 @@
 
 <%@page import="com.rivetlogic.quickquestions.model.permissions.*"%>
 
-
-
 <portlet:defineObjects />
 <theme:defineObjects/>
 
@@ -93,4 +91,9 @@ if (themeDisplay.isSignedIn()) {
 }
 
 SimpleDateFormat dateFormat =new SimpleDateFormat ("MMM dd yyyy"); 
+
+String currentUrl = PortalUtil.getCurrentURL(request);
+
 %>
+
+<portlet:renderURL var="homeUrl"></portlet:renderURL>
