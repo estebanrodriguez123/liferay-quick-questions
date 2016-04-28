@@ -9,7 +9,7 @@
 	request.setAttribute("categories", categories);
 	
 	List<Long> catIdList = new ArrayList<Long>(categories.size());
-	catIdList.add(0L);
+	catIdList.add(-1L);
 	
 	for(MBCategory cat : categories){
 		catIdList.add(cat.getCategoryId());
@@ -33,6 +33,8 @@
 	<%@ include file="/html/quickquestions/latest_questions_listing.jspf" %>
 	<div id="questions" class="questions-list">
 		<c:if test="<%=MBCategoryPermission.contains(permissionChecker, scopeGroupId, categoryId, ActionKeys.ADD_MESSAGE)%>">
+		<c:choose>
+		<c:when test="<%= !categories.isEmpty() %>">
 		<div class="">
 		<portlet:renderURL var="editQuestionURL">
 			<portlet:param name="targetPage" value="edit_question"></portlet:param>
@@ -42,6 +44,11 @@
         value="Ask a question"
         onClick="${editQuestionURL}" cssClass="btn-primary btn-main listing-btn" /> <%--<%= editQuestionURL.toString() %> --%>
         </div>
+        </c:when>
+        <c:otherwise>
+        	<div class="alert alert-warning"><liferay-ui:message key="there-are-no-categories"/></div>
+        </c:otherwise>
+        </c:choose>
 		</c:if>
 		<div class="">
 		<portlet:renderURL var="viewAllURL">

@@ -14,7 +14,7 @@
 	MBMessage parentMessage =  MBMessageLocalServiceUtil.getMBMessage(currMessageId);
 	MBThread thread = parentMessage.getThread();
 	int total= thread.getMessageCount();//MBMessageServiceUtil.getThreadMessagesCount(scopeGroupId, parentMessage.getCategoryId(), thread.getThreadId(), WorkflowConstants.STATUS_APPROVED);
-	List<MBMessage> messages = MBMessageServiceUtil.getThreadMessages(parentMessage.getGroupId(), parentMessage.getCategoryId(), parentMessage.getThreadId(), WorkflowConstants.STATUS_APPROVED, 0, total);
+	List<MBMessage> messages = MBMessageLocalServiceUtil.getThreadMessages(parentMessage.getThreadId(), WorkflowConstants.STATUS_APPROVED, 0, total);
 	
 	
 	
